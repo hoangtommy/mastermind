@@ -1,0 +1,1 @@
+This is another project focusing on practicing the principles of Object Oriented Programming. This application is a command line version of the 1970s game, Mastermind. 
