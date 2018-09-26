@@ -2,6 +2,9 @@
 class Game
   require './players.rb'
   require './game_pieces.rb'
+  require './display.rb'
+
+  include Display
 
   def initialize
     @code_breaker = Player.new('code_breaker')
@@ -10,8 +13,12 @@ class Game
     @guesses_left = 12
     @code_broken = false
 
-    setup_board # messages game_pieces to prep board
-    play_game # begins grabbing responses from human player
+
+    display_intro
+    display_instructions
+
+    #setup_board # messages game_pieces to prep board
+    #play_game # begins grabbing responses from human player
   end
 
 
@@ -29,9 +36,9 @@ class Game
       # deliver & display feedback to user
       # display remaining guesses to user
       # repeat
-      guess = @code_breaker.get_guess
+      guess_sequence = @code_breaker.get_guess
       
-      give_feedback(guess)
+      give_feedback(guess_sequence)
 
       @guesses_left -= 1
     end
@@ -39,20 +46,35 @@ class Game
   end
 
   # checks player's guess against code and displays feedback
-  def give_feedback(guess)
+  def give_feedback(guess_sequence)
+    # guess_sequence = ['P', 'P', 'G', 'R'] 
     @code_sequence = ['P', 'R', 'G', 'B']
-    guess # eg.          [R, P, Y, R] 
-    feedback = [] # [Green, Red, Red, Yello] 
-                  # Green is correct position & color
-                  # Yellow is correct in color
-                  # Red is incorrect altogether
-    @code_sequence.each do |color| # 'R', 0
-      idx = 0
-      while idx < @code_sequence.size
+    feedback = [] 
+    sub_guess_seq = []
+    sub_code_seq = []
 
-
+    # First, check for matches in position and color
+    guess_sequence.each_with_index do |color, idx|
+      if color == @code_sequence[idx]
+        feedback << '+'
+      else
+        sub_guess_seq << color
+        sub_code_seq << @code_sequence[idx]
       end
     end
+
+    # Second, check for matches in color but not in right position
+    sub_guess_seq.each do |color|
+      idx = 0
+      while idx < sub_code_seq.length
+        if color == sub_code_seq[idx]
+          feedback << 'o'
+          sub_code_seq.delete_at(idx) # remove element to prevent duplicate feedback
+        end
+        idx += 1
+      end
+    end
+
     feedback
   end
 
@@ -70,3 +92,5 @@ class Game
     end
   end
 end
+
+Game.new

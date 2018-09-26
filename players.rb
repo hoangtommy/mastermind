@@ -6,7 +6,7 @@ class Player
     if type == 'code_maker'
       @code = create_code
     else
-
+      # Enhancement: add instance for 2nd human player
     end
   end
   
@@ -14,19 +14,17 @@ class Player
   def get_guess
   	puts "Type in your code"
   	guess = gets.chomp
-  	guess.upcase!
-  	until guess =~ /^[RBPYGO]{4}$/
+  	until guess.upcase! =~ /^[RBPYGO]{4}$/
   	  puts "please type in a valid code sequence. eg: RRYG"
   	  puts "your options are: R, B, P, Y, G, O" # to-do: display options for user
   	  guess = gets.chomp
-  	  guess.upcase!
   	end
   	guess_sequence = guess.split("")
   end
 
   private
 
-  # Creates a code sequence
+  # Computer player creates a code sequence
   def create_code
     possible_colors = ["red", "blue", "purple", "yellow", "green", "orange"]
     code_sequence = []
@@ -37,6 +35,3 @@ class Player
   end
 
 end
-
-p n = Player.new('code_maker')
-p n.code
