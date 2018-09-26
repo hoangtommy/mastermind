@@ -17,7 +17,7 @@ class Player
   	guess.upcase!
   	until guess =~ /^[RBPYGO]{4}$/
   	  puts "please type in a valid code sequence. eg: RRYG"
-  	  puts "your options are..." # to-do: display options for user
+  	  puts "your options are: R, B, P, Y, G, O" # to-do: display options for user
   	  guess = gets.chomp
   	  guess.upcase!
   	end
