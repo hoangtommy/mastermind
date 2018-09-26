@@ -5,6 +5,7 @@ module Display
   	  print '.'
   	  sleep(0.5)
   	end
+  	puts 'Welcome to'
   	puts "
      __  __           _                      _           _
     |  \\/  |         | |                    (_)         | |
@@ -17,7 +18,7 @@ module Display
 
   def display_instructions
   	puts ''
-  	puts 'Welcome back L'
+  	puts 'Hello L'
   	puts 'Your expertise is required once again to do save the world. We recently acquired a public computer known to be used by Kira. You\'ll need to hack the security password to access the laptop.'
   	puts 'From our research we know the security password is composed of four of the following colors:'
   	puts ''
@@ -26,7 +27,7 @@ module Display
   	puts ''
   	puts 'You have 12 attempts to hack the password.'
   	puts ''
-  	puts 'After each attempt, our computers will analyze your color code and provide feedback to you like so:'
+  	puts 'After each attempt, our computers will analyze your code sequence and provide feedback to you like so:'
   	puts '[+][+][~]'
   	puts '[+] | Indicates one of your colors is present and is in the correct position'
   	puts '[~] | Indicates one of your colors is present but is in the incorrect position'
@@ -37,8 +38,19 @@ module Display
     puts "Your code: 'RRGG'"
     puts "Feedback:  [+][+][~]"
     puts ''
-    puts 'The first two [+][+] does not verify that the RR in your code is correct. It simply verifies that two of your colors are in the correct positons.'
+    puts 'The first two [+][+] do not verify that the RR in your code is correct. It simply verifies that two of your colors are in the correct positons.'
+    puts ''
     puts 'Hit ENTER to proceed'
     gets
+  end
+
+  def display_feedback(analysis)
+    print "Feedback: #{analysis}"
+    puts ''
+  end
+
+  def display_remaining_guesses(guesses_left)
+  	puts "Attempts remaining: #{guesses_left}"
+  	puts ''
   end
 end

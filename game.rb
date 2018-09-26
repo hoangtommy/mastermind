@@ -1,7 +1,6 @@
 # Creates the game, Mastermind and its display
 class Game
   require './players.rb'
-  require './game_pieces.rb'
   require './display.rb'
 
   include Display
@@ -13,63 +12,52 @@ class Game
     @guesses_left = 12
     @code_broken = false
 
-
     display_intro
     display_instructions
 
-    #setup_board # messages game_pieces to prep board
-    #play_game # begins grabbing responses from human player
+    play_game # begins grabbing responses from human player
   end
 
 
   private
-  
-  # 
-  def setup_board
-    GamePieces.new
-  end
 
   # Initiates the guesses from player
   def play_game
-    until @guesses_left == 0 || code_broken
-      # get guess from user
-      # deliver & display feedback to user
-      # display remaining guesses to user
-      # repeat
+    until @guesses_left == 0
       guess_sequence = @code_breaker.get_guess
+      end_game if guess_sequence == @code_sequence
       
-      give_feedback(guess_sequence)
-
+      analysis = give_feedback(guess_sequence)
+      display_feedback(analysis)
       @guesses_left -= 1
+      display_remaining_guesses(@guesses_left)
     end
     end_game
   end
 
   # checks player's guess against code and displays feedback
   def give_feedback(guess_sequence)
-    # guess_sequence = ['P', 'P', 'G', 'R'] 
-    @code_sequence = ['P', 'R', 'G', 'B']
     feedback = [] 
-    sub_guess_seq = []
-    sub_code_seq = []
+    temp_guess_seq = []
+    temp_code_seq = []
 
     # First, check for matches in position and color
     guess_sequence.each_with_index do |color, idx|
       if color == @code_sequence[idx]
         feedback << '+'
       else
-        sub_guess_seq << color
-        sub_code_seq << @code_sequence[idx]
+        temp_guess_seq << color
+        temp_code_seq << @code_sequence[idx]
       end
     end
 
     # Second, check for matches in color but not in right position
-    sub_guess_seq.each do |color|
+    temp_guess_seq.each do |color|
       idx = 0
-      while idx < sub_code_seq.length
-        if color == sub_code_seq[idx]
-          feedback << 'o'
-          sub_code_seq.delete_at(idx) # remove element to prevent duplicate feedback
+      while idx < temp_code_seq.length
+        if color == temp_code_seq[idx]
+          feedback << '~'
+          temp_code_seq.delete_at(idx) # remove element to prevent duplicate feedback
         end
         idx += 1
       end
@@ -77,20 +65,18 @@ class Game
 
     feedback
   end
-
-  # Prompts a replay to player, resets game
+  
+  # Displays end game message, exits application
   def end_game
     if @guesses_left > 0
-      puts 'You broke the code!'
+      puts "You hacked the password L! The code is: #{@code_sequence}."
       puts ''
-      puts 'Do you want to play again? Yes/No'
-      response = gets.chomp
-      Game.new if response.downcase == "yes"
     else
-      puts 'The game is over'
-      exit
+      puts 'The game is over and you\'re a loser'
     end
+    exit
   end
+
 end
 
 Game.new
