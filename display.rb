@@ -16,6 +16,7 @@ module Display
     puts 'The DEATH NOTE edition'
   end
 
+
   def display_instructions
   	puts ''
   	puts 'Hello L'
@@ -42,6 +43,16 @@ module Display
     puts ''
     puts 'Hit ENTER to proceed'
     gets
+  end
+
+  def display_get_player_role
+  	puts 'Would you like the play the role of the code breaker or the code maker?'
+  	role = gets.chomp
+  	until role.downcase == 'code breaker' || role.downcase == 'code maker'
+  		puts "Please type in 'code breaker' or 'code maker'."
+  		role = gets.chomp
+  	end
+  	role.downcase
   end
 
   def display_feedback(analysis)

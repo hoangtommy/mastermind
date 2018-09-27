@@ -1,38 +1,47 @@
-# Creates one object to represent the human user, the codebreaker
+# Creates a human player
 class Player
   attr_reader :code
 
-  def initialize(type)
-    if type == 'code_maker'
-      @code = create_code
-    else
-      # Enhancement: add instance for 2nd human player
+  def initialize(role)
+    if role == 'code maker'
+      @code = makes_code
     end
   end
   
   # Grabs user response
+  # Tom: should small displays like this to the screen also be moved into display module to abstract away things?
   def get_guess
   	puts "Type in your 4 character guess. Options: R, B, P, Y, G, W"
   	guess = gets.chomp
-  	until guess.upcase =~ /^[RBPYGW]{4}$/
-  	  puts "please type in a valid code sequence. eg: RRYG"
-  	  puts "your options are: R, B, P, Y, G, W" # to-do: display options for user
-  	  guess = gets.chomp
-  	end
+  	guess = validate_code(guess)
+
   	puts "Your code: #{guess.upcase}"
   	guess_sequence = guess.upcase.split("")
   end
 
   private
+  
+  # Checks inputs for alignment to possible code variations
+  def validate_code(sequence)
+  	until sequence.upcase =~ /^[RBPYGW]{4}$/
+  	  puts "Please type in a valid sequence. eg: RRYG"
+  	  puts "Your options are: R, B, P, Y, G, W"
+  	  sequence = gets.chomp
+  	end
+  	sequence
+  end
 
-  # Computer player creates a code sequence
-  def create_code
-    possible_colors = ["R", "B", "P", "Y", "G", "W"]
-    code_sequence = []
-    until code_sequence.size == 4
-      code_sequence << possible_colors[rand(6)]
-    end
-    code_sequence
+  # Human player creates a code sequence
+  def makes_code
+  	puts 'Make a 4 character secret sequence. Options: R, B, P, Y, G, W'
+  	code_sequence = gets.chomp
+  	code_sequence = validate_code(code_sequence)
+  	code_sequence.upcase
+  end
+
+  # Human player gives feedback
+  def player_feedback(guess_sequence)
+
   end
 
 end

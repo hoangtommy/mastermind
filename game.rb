@@ -1,33 +1,39 @@
 # Creates the game, Mastermind and its display
 class Game
   require './players.rb'
+  require './ai.rb'
   require './display.rb'
 
   include Display
 
   def initialize
-    @code_breaker = Player.new('code_breaker')
-    @code_maker = Player.new('code_maker')
-    @code_sequence = @code_maker.code
-    @guesses_left = 12
-    @code_broken = false
-
     display_intro
     display_instructions
 
-    play_game # begins grabbing responses from human player
+    @player_role = display_get_player_role
+    @player = Player.new(@player_role)
+    if @player_role == 'code maker'
+      @code_sequence = @player.code
+      @ai = Ai.new('code breaker')
+    else
+      @ai = Ai.new('code maker')
+      @code_sequence = @ai.code
+    end
+
+    @guesses_left = 12
+    play_game(@player_role)
   end
 
 
   private
 
-  # Initiates the guesses from player
-  def play_game
+  # Plays game where human is guesser
+  def code_breaker_game
     until @guesses_left == 0
-      guess_sequence = @code_breaker.get_guess
+      guess_sequence = @player.get_guess
       end_game if guess_sequence == @code_sequence
       
-      analysis = give_feedback(guess_sequence)
+      analysis = @ai.ai_feedback(guess_sequence, @code_sequence)
       display_feedback(analysis)
       @guesses_left -= 1
       display_remaining_guesses(@guesses_left)
@@ -35,40 +41,29 @@ class Game
     end_game
   end
 
-  # checks player's guess against code and displays feedback
-  def give_feedback(guess_sequence)
-    feedback = [] 
-    temp_guess_seq = []
-    temp_code_seq = []
+  # Plays game where human is code maker
+  def code_maker_game
+    until @guesses_left == 0
+      guess_sequence = @ai.ai_guess
+      end_game if guess_sequence = @code_sequence
 
-    # First, check for matches in position and color
-    guess_sequence.each_with_index do |color, idx|
-      if color == @code_sequence[idx]
-        feedback << '+'
-      else
-        temp_guess_seq << color
-        temp_code_seq << @code_sequence[idx]
-      end
+      analysis = @player.player_feedback(guess_sequence, @code_sequence)
+      display_feedback(analysis)
+      @guesses_left -= 1
+      display_remaining_guesses
     end
+    end_game
+  end
 
-    # Second, check for matches in color but not in right position
-    temp_guess_seq.each do |color|
-      idx = 0
-      while idx < temp_code_seq.length
-        if color == temp_code_seq[idx]
-          feedback << '~'
-          temp_code_seq.delete_at(idx) # remove element to prevent duplicate feedback
-        end
-        idx += 1
-      end
-    end
-
-    feedback
+  # Initiates one of two appropriate games
+  def play_game(player_role)
+    player_role == 'code breaker' ? code_breaker_game : code_maker_game
   end
   
   # Displays end game message, exits application
   def end_game
     if @guesses_left > 0
+      # to-do: move this display message to display.rb
       puts "You hacked the password L! The code is: #{@code_sequence}."
       puts ''
     else
