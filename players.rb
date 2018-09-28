@@ -1,5 +1,9 @@
 # Creates a human player
 class Player
+  require './display.rb'
+
+  include Display
+
   attr_reader :code
 
   def initialize(role)
@@ -19,16 +23,36 @@ class Player
   	guess_sequence = guess.upcase.split("")
   end
 
+  # Human player gives feedback
+  def player_feedback(guess_sequence, code_sequence)
+  	display_space
+  	puts "Your code: #{code_sequence}"
+  	puts "AI Guess: #{guess_sequence}"
+  	display_space
+  	puts 'Type in feedback to the AI.'
+
+  	feedback = gets.chomp
+  	feedback = validate_feedback(feedback)
+  end
+
   private
   
   # Checks inputs for alignment to possible code variations
   def validate_code(sequence)
   	until sequence.upcase =~ /^[RBPYGW]{4}$/
-  	  puts "Please type in a valid sequence. eg: RRYG"
-  	  puts "Your options are: R, B, P, Y, G, W"
+  	  display_error('code sequence') # Tom: is it good practice to abstract away something as small as an error message?
   	  sequence = gets.chomp
   	end
   	sequence
+  end
+
+  # Checks input for correct use of feedback
+  def validate_feedback(feedback)
+  	until feedback =~ /^[\s+~]{0,4}$/
+  	  display_error('feedback')
+  	  feedback = gets.chomp
+  	end
+  	feedback.split('')
   end
 
   # Human player creates a code sequence
@@ -39,9 +63,6 @@ class Player
   	code_sequence.upcase
   end
 
-  # Human player gives feedback
-  def player_feedback(guess_sequence)
-
-  end
 
 end
+

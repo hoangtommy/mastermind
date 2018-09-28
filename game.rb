@@ -31,28 +31,32 @@ class Game
   def code_breaker_game
     until @guesses_left == 0
       guess_sequence = @player.get_guess
-      end_game if guess_sequence == @code_sequence
+      if guess_sequence == @code_sequence
+        end_game('You')
+      end
       
       analysis = @ai.ai_feedback(guess_sequence, @code_sequence)
       display_feedback(analysis)
       @guesses_left -= 1
       display_remaining_guesses(@guesses_left)
     end
-    end_game
+    end_game('You')
   end
 
   # Plays game where human is code maker
   def code_maker_game
     until @guesses_left == 0
       guess_sequence = @ai.ai_guess
-      end_game if guess_sequence = @code_sequence
+      if guess_sequence == @code_sequence 
+        end_game('AI')
+      end
 
       analysis = @player.player_feedback(guess_sequence, @code_sequence)
       display_feedback(analysis)
       @guesses_left -= 1
-      display_remaining_guesses
+      display_remaining_guesses(@guesses_left)
     end
-    end_game
+    end_game('AI')
   end
 
   # Initiates one of two appropriate games
@@ -61,13 +65,13 @@ class Game
   end
   
   # Displays end game message, exits application
-  def end_game
+  def end_game(player)
     if @guesses_left > 0
       # to-do: move this display message to display.rb
-      puts "You hacked the password L! The code is: #{@code_sequence}."
-      puts ''
+      puts "#{player} hacked the password in #{12-@guesses_left} tries! The code was: #{@code_sequence}."
+      display_space
     else
-      puts 'The game is over and you\'re a loser'
+      puts "The game is over and #{player} loss."
     end
     exit
   end

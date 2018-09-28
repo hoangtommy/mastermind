@@ -6,11 +6,17 @@ class Ai
   	if purpose_of_existing == 'code maker'
   		@code = make_code
   	end
+  	@possible_colors = ["R", "B", "P", "Y", "G", "W"]
   end
 
   # ai guesses code
   def ai_guess
-  	
+  	puts 'AI is thinking of a guess'
+  	3.times do
+  	  print '.'
+  	  sleep(0.4)
+  	end
+  	guess = make_code.join('')
   end
 
   # ai gives feedback
@@ -50,12 +56,11 @@ class Ai
 
   private
 
-  # ai creates a code sequence
+  # ai creates ang guess a code sequence
   def make_code
-    possible_colors = ["R", "B", "P", "Y", "G", "W"]
     code_sequence = []
     until code_sequence.size == 4
-      code_sequence << possible_colors[rand(6)]
+      code_sequence << @possible_colors[rand(6)]
     end
     code_sequence
   end
